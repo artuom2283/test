@@ -1,0 +1,123 @@
+/*ТР-23. Пузенко Артем Андрійович. Варіант № 19
+Лабораторна робота № 10  Обробка одновимірних масивів */
+/* Підключення бібліотек;*/
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+#define N 99
+void vvid_klav(int i, int A[]);//для введення елементів масиву
+void vvid_rand(int i, int A[]);//для заповнення масиву випадковими числами
+void vyvid(int i, int A[]);//для виведення масиву
+int Amin(int i, int A[], int* nomer);//функція для знаходження максимального елементу в першій частині масиву
+void obrobka(int i, int A[]);//Функція для перетворення масиву
+int main() {
+
+    system("chcp 1251 & cls");
+    srand(time(NULL));
+    char resume;// змінна для повторного виконання роботи;
+    int A[N], // масив
+        ind,//Змінна для вибору способу вводу массиву
+        i,//розмірність масиву
+        min,//мінімальне значення в другій половині масиву
+        nomer;//номер мінімального елементу масиву
+    do {
+
+        printf("Для того щоб ввести масив з клавіатури натисніть 0, інакше будь яке число: ");
+        scanf_s("%d", &ind);
+        //введення кількісті елементів в масиві, та перевірка
+        do {
+            printf("Ввдедіть кількість елементів в масиві: ");
+            scanf_s("%d", &i);
+            fseek(stdin, 0, SEEK_END);
+            if (i > 99) {
+                printf("Занадто великий масив \n");
+            }
+        } while (i > 99);
+        //виклик функцій для заповнення масиву
+        if (!ind) {
+            printf("Ввдедіть елементи масиву: \n");
+            vvid_klav(i, A);
+        }
+        else {
+            vvid_rand(i, A);
+        }
+        printf("Початковий масив: \n");
+        vyvid(i, A);
+        //знаходження мінімального елементу в другій половині масиву
+        min = Amin(i, A, &nomer);
+        printf("%d - мінімальний елемент 2-ої половини масиву під номером %d\n", min, nomer);
+        //Алгоритм перетворення масиву
+        if (!(nomer % 2) && !(min % 2)) {
+            printf("Робимо перестановку\n");
+            obrobka(i, A);
+        }
+        else {
+            printf("Обробка не відбувалась\n");
+        }
+        printf("Кінцевий масив: \n");
+        vyvid(i, A);
+
+        printf("\n\n");
+        //Повторне виконання програми
+        printf("Продовжувати роботу (Y - так)? ");
+        while ((resume = getchar()) == ' ' || resume == '\n' || resume == '\t');
+        fseek(stdin, 0, SEEK_END);
+    } while (resume == 'Y' || resume == 'y' || resume == 'Т' || resume == 'т');
+    printf("\n\n");
+}
+
+void vvid_rand(int i, int A[]) {  //заповнення масиву радномними значеннями від 0 до 100
+    int n;
+    for (n = 0; n < i; n++) {
+        A[n] = rand() % 101; //Використання рандомного значення за допомогою бібліотеки  <time.h>
+    }
+}
+void vvid_klav(int i, int A[]) {  //заповнення масиву з клавіатури
+    int n;
+    for (n = 0; n < i; n++) {
+        scanf_s("%d", &A[n]);
+    }
+    fseek(stdin, 0, SEEK_END);
+    printf("\n");
+}
+void vyvid(int i, int A[]) {  //вивід масиву
+    int n;
+    printf("A[%d]: ", i);
+    for (n = 0; n < i; n++) {
+        printf("| %d ", A[n]);
+    }
+    printf("|\n");
+}
+int Amin(int i, int A[], int* nomer) { //алгоритм знаходження мінімального члена другої половини масиву
+    int min;
+    int n;
+    n = (i + 1) / 2;
+    *nomer = n;
+    min = A[n];
+    for (n+=1; n < i; n++) {
+        if (A[n] <= min) {
+            *nomer = n;
+            min = A[n];
+        }
+    }
+    *nomer += 1;
+    return min;
+}
+void obrobka(int i, int A[]) { //алгоритм перетворення масиву
+    int temp;
+    int n;
+    int k = 0;
+    if (i % 2) { 
+        n = i - 1; // починаємо з кінця масива
+
+    }
+    else {
+        n = i - 2;
+    }
+    for (k; n > i / 2 - 1; n -= 2, k += 2) {
+        temp = A[n];
+        A[n] = A[k];
+        A[k] = temp;
+    }
+}
